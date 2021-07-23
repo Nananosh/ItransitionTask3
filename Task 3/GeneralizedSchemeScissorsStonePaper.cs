@@ -20,7 +20,7 @@ namespace Task_3
             return startingParams;
         }
 
-        private static string GeneratingSecretKey()
+        private static string GenerateSecretKey()
         {
             RandomNumberGenerator randomNumberGenerator = new RNGCryptoServiceProvider();
             byte[] bytes = new byte[16];
@@ -51,7 +51,7 @@ namespace Task_3
             Console.WriteLine("0 - Exit");
         }
 
-        private static string GameWinner(int computerMove, int playerMove, int numberMoves)
+        private static string GetGameWinner(int computerMove, int playerMove, int numberMoves)
         {
             int step = (numberMoves - 1) / 2;
             string winner = null;
@@ -76,13 +76,13 @@ namespace Task_3
             return winner;
         }
 
-        private static void Menu(string[] startingParams, string secretKey, int computerMove, string computerMoveText,
+        private static void PrintMenu(string[] startingParams, string secretKey, int computerMove, string computerMoveText,
             string hmac)
         {
             bool state = true;
             do
             {
-                Console.WriteLine("HMAC : \n" + hmac);
+                Console.WriteLine($"HMAC : \n {hmac}");
                 Console.WriteLine("Available moves:");
                 AvailableMoves(startingParams);
                 Console.WriteLine($"Enter your move : ");
@@ -94,10 +94,10 @@ namespace Task_3
                         Environment.Exit(0);
                     }
 
-                    playerMove = playerMove - 1;
+                    playerMove--;
                     Console.WriteLine($"Your move : {startingParams[playerMove]}");
                     Console.WriteLine($"Computer move : {computerMoveText}");
-                    Console.WriteLine(GameWinner(computerMove, playerMove, startingParams.Length));
+                    Console.WriteLine(GetGameWinner(computerMove, playerMove, startingParams.Length));
                     Console.WriteLine($"HMAC key : {secretKey}");
                     state = false;
                 }
@@ -107,15 +107,15 @@ namespace Task_3
                 }
             } while (state);
         }
-
+        
         public static void StartGame(string[] args)
         {
             string[] startingParams = CheckStartingParams(args);
-            string secretKey = GeneratingSecretKey();
+            string secretKey = GenerateSecretKey();
             int computerMove = ComputerMove(startingParams.Length);
             string computerMoveText = startingParams[computerMove];
             string hmac = GetHMAC(computerMoveText, secretKey);
-            Menu(startingParams, secretKey, computerMove, computerMoveText, hmac);
+            PrintMenu(startingParams, secretKey, computerMove, computerMoveText, hmac);
         }
     }
 }
